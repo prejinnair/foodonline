@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect
 from .forms import UserForm
-
+from .models import User
 # Create your views here.
 def register_user(request):
     if request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            password = form.cleaned_data['password']
+            user = form.save(commit=False)
+            user.role = User.CUSTOMER
+            user.set_password(password)
+            user.save()
             return redirect('register_user')
     else:
         form = UserForm()
