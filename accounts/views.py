@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import UserForm
 from .models import User, UserProfile
-from django.contrib import messages
+from django.contrib import messages, auth
 from vendor.forms import VendorForm
 # Create your views here.
 def register_user(request):
@@ -47,3 +47,25 @@ def register_vendor(request):
         'vendor_form': vendor_form
     }
     return render(request, 'accounts/register_vendor.html', context)
+
+def login(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+        user = auth.authenticate(email=email, password=password)
+        if user is not None:
+            auth.login(request, user)
+            messages.success(request, 'You are logged in now.')
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'Invalid email or password')
+            return redirect('login')
+
+    return render(request, 'accounts/login.html')
+
+def logout(request):
+    auth.logout(request)
+    messages.info(request, 'You are logged out now.')
+    return redirect('login')
+def dashboard(request):
+    return render(request, 'accounts/dashboard.html')
