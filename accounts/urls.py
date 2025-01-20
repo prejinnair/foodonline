@@ -5,7 +5,10 @@ urlpatterns = [
     path('register_user/', views.register_user, name='register_user'),
     path('register_vendor/', views.register_vendor, name='register_vendor'),
     path('login/', views.login, name='login'),
-    path('dashboard/', views.dashboard, name='dashboard'),
+    path('my_account/', views.my_account, name='my_account'),
     path('logout/', views.logout, name='logout'),
+    path('vendor_dashboard/', views.vendor_dashboard, name='vendor_dashboard'),
+    path('customer_dashboard/', views.customer_dashboard, name='customer_dashboard'),
+   
 
 ]
