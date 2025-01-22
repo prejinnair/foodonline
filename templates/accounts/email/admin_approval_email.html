@@ -1,0 +1,10 @@
+{% autoescape off %}
+
+Hi {{user.first_name}}, 
+{% if is_approved %}
+Your Restaurant has been approved by our admin team --foodonline
+{% else %}
+We're sorry your restaurant is not eligible for our platform at this time. Please contact us at [support@foodonline.com]  --foodonline
+{% endif %}
+
+{% endautoescape %}
