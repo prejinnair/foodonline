@@ -4,8 +4,12 @@ from accounts.forms import UserProfileForm
 from .models import Vendor
 from accounts.models import UserProfile
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from accounts.views import user_passes_test, check_role_vendor
 # Create your views here.
 
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
 def vendor_profile(request):
     user_profile = get_object_or_404(UserProfile, user=request.user)
     vendor = get_object_or_404(Vendor, user=request.user)
@@ -18,7 +22,6 @@ def vendor_profile(request):
             messages.success(request, 'Restaurant details updated!. ')
             return redirect('vendor_profile')
         else:
-            messages.error(request, 'Please check the entered details.')
             print(profile_form.errors)
             print(vendor_form.errors)
     else:
