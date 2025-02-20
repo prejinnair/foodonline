@@ -17,24 +17,28 @@
 								<div class="user-holder">
 									<h5 class="text-uppercase">Build Your Food Menu</h5>
                                     <hr>
-                                    <h6>Menu Categories</h6>
+                                    <h6>Category: <span class="text-capitalize text-success">{{ category }}</span></h6>
                                     <a href="#" class="btn btn-success float-right m-1"><i class="fa fa-plus" aria-hidden="true"></i> Add Food</a>
-                                    <a href="#" class="btn btn-info float-right m-1"><i class="fa fa-plus" aria-hidden="true"></i> Add Category</a>
-
+									{% if food_items %}
                                     <table class="table table-hover table-borderless">
                                         <tbody>
-											{% for cat in categories %}
+										{% for food in food_items %}
                                           <tr>
                                             <td class="text-left">{{forloop.counter}}</td>
+											<td class="text-left"><img src="{{ food.image.url }}" alt="{{food}}" width="50" height="50"></td>
                                             <td class="text-left">
-												<a href="{% url 'fooditems_by_category' pk=cat.pk %}"><p class="mb-0 font-weight-bold">{{cat}}</p>
-												<small class="text-muted">{{cat.description}}</small></a>
+												<a href=""><p class="mb-0 font-weight-bold">{{food}}</p>
+												<small class="text-muted">{{food.description}}</small></a>
 											</td>
                                             <td class><i class="fa fa-pencil" aria-hidden="true"></i> &nbsp; <i class="fa fa-trash text-danger" aria-hidden="true"></i></td>
                                           </tr>
 										  {% endfor %}
                                         </tbody>
                                       </table>
+									  {% else %}
+									  <p class="text-center text-capitalize text-muted">No Food Items Found</p>
+									  <div class="text-center"><a href="#" class="btn btn-success"><i class="fa fa-plus" aria-hidden="true"></i> Add Food</a></div>
+									  {% endif %}
 								</div>
 							</div>
 						</div>
