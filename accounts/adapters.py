@@ -15,7 +15,7 @@ class MySocialAccountAdapter(DefaultSocialAccountAdapter):
         if email:
             try:
                 # Check if user with the same email already exists
-                existing_user = User.objects.get(email=email)
+                existing_user = User.objects.get(email=email, is_active=True)
                 sociallogin.connect(request, existing_user)
             except User.DoesNotExist:
                 pass  # Allow new user creation
