@@ -30,7 +30,7 @@
 												<a href="{% url 'fooditems_by_category' pk=cat.pk %}"><p class="mb-0 font-weight-bold">{{cat}}</p>
 												<small class="text-muted">{{cat.description}}</small></a>
 											</td>
-                                            <td class><i class="fa fa-pencil" aria-hidden="true"></i> &nbsp; <i class="fa fa-trash text-danger" aria-hidden="true"></i></td>
+                                            <td class><a href="{% url 'edit_category' pk=cat.pk %}" style="color: unset;"><i class="fa fa-pencil" aria-hidden="true"></i></a> &nbsp; <a href="{% url 'delete_category' pk=cat.pk %}" onclick="return confirm('Are you sure you want to delete this category?')"><i class="fa fa-trash text-danger" aria-hidden="true"></i></a></td>
                                           </tr>
 										  {% endfor %}
                                         </tbody>
