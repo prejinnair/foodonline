@@ -107,7 +107,7 @@ def login(request):
         user = auth.authenticate(email=email, password=password)
         if user is not None:
             auth.login(request, user)
-            messages.success(request, 'You are logged in now.')
+            messages.success(request, f'Succesfully Logged In as {request.user.username}.')
             return redirect('my_account')
         else:
             messages.error(request, 'Invalid email or password')

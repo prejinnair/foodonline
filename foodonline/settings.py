@@ -29,7 +29,7 @@ DEBUG = config( "DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 
-
+SITE_ID = 2
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,7 +42,29 @@ INSTALLED_APPS = [
     'accounts',
     'vendor',
     'menu',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+
+ACCOUNT_LOGIN_METHODS = {"email"}
+SOCIALACCOUNT_ADAPTER = "accounts.adapters.MySocialAccountAdapter"
+SOCIALACCOUNT_AUTO_SIGNUP = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = "username"  # Keep this to allow linking
+ACCOUNT_USERNAME_REQUIRED = False  # No manual username needed
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+    }
+}
+
+SOCIALACCOUNT_LOGIN_ON_GET = True  # Skip intermediate page
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -52,6 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'foodonline.urls'
@@ -154,3 +177,12 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 
 GOOGLE_API_KEY = config('GOOGLE_API_KEY')
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+LOGIN_REDIRECT_URL = "/account/my_account/"
+ACCOUNT_SIGNUP_REDIRECT_URL = "/account/my_account/"
+LOGOUT_REDIRECT_URL = "/account/login/"

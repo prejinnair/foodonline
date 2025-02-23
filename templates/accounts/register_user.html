@@ -83,6 +83,18 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="field-holder">
+                                                <div class="payment-holder">
+                                                    {% load socialaccount %}
+                                                    <a href="{% provider_login_url 'google' %}?next=/account/my_account/" class="btn btn-danger">
+                                                        <i class="fa fa-google"></i> Signup with Google
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             {% include 'includes/alerts.html' %}
                                         </div>
                                     </div>
