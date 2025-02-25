@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from accounts.views import user_passes_test, check_role_vendor
 from menu.models import Category, FoodItem
-from menu.forms import CategoryForm
+from menu.forms import CategoryForm, FoodItemForm
 from django.template.defaultfilters import slugify
 # Create your views here.
 
@@ -74,9 +74,9 @@ def add_category(request):
             category_name = form.cleaned_data['category_name']
             category = form.save(commit=False)
             category.vendor = get_vendor(request)
-            category.slug = slugify(category_name)
+            category.slug = f'{slugify(category_name)}-{category.id}'
             category.save()
-            messages.success(request, 'Category added successfully!. ')
+            messages.success(request, f'{category_name} added successfully!. ')
             return redirect('menu_builder')
     else:
         form = CategoryForm()
@@ -85,6 +85,8 @@ def add_category(request):
     }
     return render(request, 'vendor/add_category.html', context)
 
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
 def edit_category(request, pk=None):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
@@ -93,9 +95,9 @@ def edit_category(request, pk=None):
             category_name = form.cleaned_data['category_name']
             category = form.save(commit=False)
             category.vendor = get_vendor(request)
-            category.slug = slugify(category_name)
+            category.slug = f'{slugify(category_name)}-{category.id}'
             category.save()
-            messages.success(request, 'Category Updated successfully!. ')
+            messages.success(request, f'{category_name} Updated successfully!. ')
             return redirect('menu_builder')
     else:
         form = CategoryForm(instance=category)
@@ -105,8 +107,64 @@ def edit_category(request, pk=None):
     }
     return render(request, 'vendor/edit_category.html', context)
 
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
 def delete_category(request, pk=None):
     category = get_object_or_404(Category, pk=pk)
     category.delete()
     messages.success(request, 'Category deleted successfully!. ')
     return redirect('menu_builder')
+
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
+def add_food(request):
+    if request.method == 'POST':
+        form = FoodItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            food_title = form.cleaned_data['food_title']
+            food_item = form.save(commit=False)
+            food_item.vendor = get_vendor(request)
+            food_item.slug = slugify(food_title)
+            food_item.save()
+            messages.success(request, f'{food_title} added successfully!. ')
+            return redirect('fooditems_by_category', food_item.category.id)
+    else:
+        form = FoodItemForm()
+        # modify the form to include the category field related to the vendor
+        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
+    context = {
+        'form': form,
+    }
+    return render(request, 'vendor/add_food.html', context)
+
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
+def edit_food(request, pk=None):
+    food_item = get_object_or_404(FoodItem, pk=pk)
+    if request.method == 'POST':
+        form = FoodItemForm(request.POST, request.FILES, instance=food_item)
+        if form.is_valid():
+            food_title = form.cleaned_data['food_title']
+            food_item = form.save(commit=False)
+            food_item.vendor = get_vendor(request)
+            food_item.slug = slugify(food_title)
+            food_item.save()
+            messages.success(request, f'{food_title} Updated successfully!. ')
+            return redirect('fooditems_by_category', food_item.category.id)    
+    else:
+        form = FoodItemForm(instance=food_item)
+        # modify the form to include the category field related to the vendor
+        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
+    context = {
+        'form': form,
+        'food_item': food_item,
+    }
+    return render(request, 'vendor/edit_food.html', context)
+
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
+def delete_food(request, pk=None):
+    food_item = get_object_or_404(FoodItem, pk=pk)
+    food_item.delete()
+    messages.success(request, 'Food Item deleted successfully!. ')
+    return redirect('fooditems_by_category', food_item.category.id)    

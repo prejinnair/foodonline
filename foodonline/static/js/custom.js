@@ -1,3 +1,8 @@
+
+document.addEventListener("DOMContentLoaded", function () {
+    initAutoComplete();
+});
+
 let autocomplete;
 
 function initAutoComplete(){
