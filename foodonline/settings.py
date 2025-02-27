@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'marketplace',
 ]
 
 ACCOUNT_LOGIN_METHODS = {"email"}
@@ -183,6 +184,6 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-LOGIN_REDIRECT_URL = "/account/my_account/"
-ACCOUNT_SIGNUP_REDIRECT_URL = "/account/my_account/"
-LOGOUT_REDIRECT_URL = "/account/login/"
+LOGIN_REDIRECT_URL = "/my_account/"
+ACCOUNT_SIGNUP_REDIRECT_URL = "/my_account/"
+LOGOUT_REDIRECT_URL = "/login/"

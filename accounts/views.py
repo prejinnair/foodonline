@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
+from django.template.defaultfilters import slugify
 
 # Restrict the vendor from accessing the customer dashboard
 def check_role_vendor(user):
@@ -64,6 +65,8 @@ def register_vendor(request):
             user_profile = UserProfile.objects.get(user=user)
             vendor = vendor_form.save(commit=False)
             vendor.user = user
+            vendor_name=vendor_form.cleaned_data['vendor_name']
+            vendor.vendor_slug = f'{slugify(vendor_name)}-{user.id}'
             vendor.user_profile = user_profile
             vendor.save()
             # send verification email
