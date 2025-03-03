@@ -46,7 +46,7 @@ function onPlaceChanged (){
                 $('#id_country').val(place.address_components[i].long_name)
             }
             // get state
-            if (place.address_components[i].types[j] == "administrative_area_level_1") {
+            if (place.address_components[i].types[j] == "administrative_area_level_1") {    
                 $('#id_state').val(place.address_components[i].long_name)
             }
             // get city
@@ -64,3 +64,19 @@ function onPlaceChanged (){
         }
     }
 }
+
+$(document).ready(function(){
+    $('.add-to-cart').on('click', function(e){
+        e.preventDefault();
+        var foodId = $(this).data('id');
+        url = $(this).data('url');
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: {food_id: foodId},
+            success: function(response){
+                alert(response)
+            }
+        })
+    })
+})
