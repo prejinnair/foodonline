@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from vendor.models import Vendor
 from menu.models import Category, FoodItem
 from django.db.models import Prefetch
+from .models import Cart
 # Create your views here.
 
 def market_place(request):
@@ -26,4 +27,25 @@ def vendor_detail(request, vendor_slug):
     return render(request, 'market_place/vendor_detail.html', context)
 
 def add_to_cart(request, food_id=None):
-    return HttpResponse('Add to cart view')
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+
+            # check food item exists
+            try:
+                food_item = FoodItem.objects.get(id=food_id)
+                # check if food item is already added to cart
+                try:
+                    check_cart = Cart.objects.get(fooditem=food_item, user=request.user)
+                    # if food item is already added, increment quantity
+                    check_cart.quantity += 1
+                    check_cart.save()
+                    return JsonResponse({'status':'Success', 'message': 'Increased cart quantity.'})
+                except Cart.DoesNotExist:
+                    # if food item is not added, create new cart item
+                    check_cart = Cart.objects.create(fooditem=food_item, user=request.user, quantity=1)
+                    return JsonResponse({'status':'Success', 'message': 'Food Item added to cart.'})
+            except FoodItem.DoesNotExist:
+                return JsonResponse ({'status':'Failed', 'message': 'Food item doesnot exist'})
+        else:
+            return JsonResponse ({'status':'Failed', 'message': 'Invalid request'})
+    return JsonResponse ({'status':'Failed', 'message': 'Please login to continue'})

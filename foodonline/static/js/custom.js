@@ -75,7 +75,7 @@ $(document).ready(function(){
             url: url,
             data: {food_id: foodId},
             success: function(response){
-                alert(response)
+                console.log(response, 'respones')
             }
         })
     })
