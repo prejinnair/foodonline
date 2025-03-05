@@ -73,10 +73,58 @@ $(document).ready(function(){
         $.ajax({
             type: 'GET',
             url: url,
-            data: {food_id: foodId},
             success: function(response){
-                console.log(response, 'respones')
+                if (response.status == 'Success'){
+                $('#cart-count').html(response.cart_count['cart_count'])
+                $('#qty_' + foodId).html(response.qty)
+                }
+                else if(response.status == 'login_required'){
+                    swal( response.message, "Please login to continue", "info").then(function(){
+                        window.location.href = "/login";
+                    })
+                }
+                else{
+                    swal(response.message, '', 'error')
+                }
             }
         })
+    })
+    // place the cart item quantity on load
+    $('.item_qty').each(function(){
+        var the_id = $(this).attr('id');
+        var qty = $(this).attr('data-qty');
+        $('#' + the_id).html(qty)
+    })
+})
+
+$(document).ready(function(){
+    $('.remove-from-cart').on('click', function(e){
+        e.preventDefault();
+        var foodId = $(this).data('id');
+        url = $(this).data('url');
+        $.ajax({
+            type: 'GET',
+            url: url,
+            success: function(response){
+            if (response.status == 'Success'){
+                $('#cart-count').html(response.cart_count['cart_count'])
+                $('#qty_' + foodId).html(response.qty)
+            }
+            else if(response.status == 'login_required'){
+                swal( response.message, "Please login to continue", "info").then(function(){
+                    window.location.href = "/login";
+                })
+            }
+            else{
+                swal(response.message, '', 'error')
+            }
+        }
+    })
+})
+    // place the cart item quantity on load
+    $('.item_qty').each(function(){
+        var the_id = $(this).attr('id');
+        var qty = $(this).attr('data-qty');
+        $('#' + the_id).html(qty)
     })
 })
