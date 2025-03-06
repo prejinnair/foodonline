@@ -5,6 +5,8 @@ from menu.models import Category, FoodItem
 from django.db.models import Prefetch
 from .models import Cart
 from .context_processors import get_cart_count
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
 def market_place(request):
@@ -81,3 +83,24 @@ def remove_from_cart(request, food_id=None):
         else:
             return JsonResponse ({'status':'Failed', 'message': 'Invalid request'})
     return JsonResponse ({'status':'login_required', 'message': 'Please login to continue'})
+
+@login_required(login_url = 'login')
+def cart(request):
+    cart_items = Cart.objects.filter(user=request.user)
+    context = {
+        'cart_items': cart_items,
+    }
+    return render(request, 'market_place/cart.html', context)
+
+def delete_cart_item(request, cart_id=None):
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            try:
+                cart_item = Cart.objects.get(id=cart_id, user=request.user)
+                cart_item.delete()
+                return JsonResponse({'status':'Success', 'message':'Cart item has been deleted.', 'cart_count': get_cart_count(request)})
+            except Cart.DoesNotExist:
+                return JsonResponse({'status':'Failed', 'message':'Cart item does not exist.'})
+        else:
+            return JsonResponse ({'status':'Failed', 'message': 'Invalid request'})
+    return JsonResponse({'status':'login_required', 'message':'Please login to continue'})

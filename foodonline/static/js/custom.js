@@ -95,10 +95,8 @@ $(document).ready(function(){
         var qty = $(this).attr('data-qty');
         $('#' + the_id).html(qty)
     })
-})
 
-$(document).ready(function(){
-    $('.remove-from-cart').on('click', function(e){
+$('.remove-from-cart').on('click', function(e){
         e.preventDefault();
         var foodId = $(this).data('id');
         url = $(this).data('url');
@@ -120,11 +118,46 @@ $(document).ready(function(){
             }
         }
     })
-})
     // place the cart item quantity on load
     $('.item_qty').each(function(){
         var the_id = $(this).attr('id');
         var qty = $(this).attr('data-qty');
         $('#' + the_id).html(qty)
     })
+})
+
+
+$('.delete-cart').on('click', function(e){
+        e.preventDefault();
+        var cart = $(this).data('id');
+        url = $(this).data('url');
+        $.ajax({
+            type: 'GET',
+            url: url,
+            success: function(response){
+            if (response.status == 'Success'){
+                $('#cart-count').html(response.cart_count['cart_count'])
+                swal(response.status, response.message, "success")
+                removeCartItem(0, cart);
+                checkEmptyCart();
+            }
+            else{
+                swal(response.status, response.message, 'error')
+            }
+        }
+    })
+})
+
+    // delete the cart element if the quantity is 0
+    function removeCartItem(qty, cartId){
+        if(qty <= 0){
+            $('#cart-item-' + cartId).remove();
+    }
+}
+    function checkEmptyCart(){
+        var cartCount = document.getElementById('cart-count').innerHTML;
+        if(cartCount == 0){
+            $('#empty-cart').show();
+        }
+    }
 })
