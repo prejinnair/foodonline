@@ -77,6 +77,8 @@ $(document).ready(function(){
                 if (response.status == 'Success'){
                 $('#cart-count').html(response.cart_count['cart_count'])
                 $('#qty_' + foodId).html(response.qty)
+                // subtotal, tax, grand_total
+                applyCartAmount(response.cart_amount['sub_total'], response.cart_amount['tax'], response.cart_amount['grand_total'])
                 }
                 else if(response.status == 'login_required'){
                     swal( response.message, "Please login to continue", "info").then(function(){
@@ -100,6 +102,8 @@ $('.remove-from-cart').on('click', function(e){
         e.preventDefault();
         var foodId = $(this).data('id');
         url = $(this).data('url');
+        var cartId = $(this).attr('id');
+
         $.ajax({
             type: 'GET',
             url: url,
@@ -107,6 +111,10 @@ $('.remove-from-cart').on('click', function(e){
             if (response.status == 'Success'){
                 $('#cart-count').html(response.cart_count['cart_count'])
                 $('#qty_' + foodId).html(response.qty)
+                removeCartItem(response.qty, cartId);
+                checkEmptyCart();
+                // sub_total, tax, grand_total
+                applyCartAmount(response.cart_amount['sub_total'], response.cart_amount['tax'], response.cart_amount['grand_total'])
             }
             else if(response.status == 'login_required'){
                 swal( response.message, "Please login to continue", "info").then(function(){
@@ -140,6 +148,7 @@ $('.delete-cart').on('click', function(e){
                 swal(response.status, response.message, "success")
                 removeCartItem(0, cart);
                 checkEmptyCart();
+                applyCartAmount(response.cart_amount['sub_total'], response.cart_amount['tax'], response.cart_amount['grand_total'])
             }
             else{
                 swal(response.status, response.message, 'error')
@@ -150,14 +159,24 @@ $('.delete-cart').on('click', function(e){
 
     // delete the cart element if the quantity is 0
     function removeCartItem(qty, cartId){
-        if(qty <= 0){
-            $('#cart-item-' + cartId).remove();
+        if(window.location.pathname == '/cart/'){
+            if(qty <= 0){
+                $('#cart-item-' + cartId).remove();
+            }
+        }
     }
-}
     function checkEmptyCart(){
         var cartCount = document.getElementById('cart-count').innerHTML;
         if(cartCount == 0){
             $('#empty-cart').show();
         }
     }
+
+    function applyCartAmount(sub_total, tax, grand_total){
+        if(window.location.pathname == '/cart/'){
+            $('#subtotal').html(sub_total)
+            $('#tax').html(tax)
+            $('#total').html(grand_total)
+    }
+}
 })

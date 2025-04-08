@@ -26,10 +26,11 @@
 															<div class="text-holder">
 																<h6>{{ item.fooditem }}</h6>
 																<span>{{ item.fooditem.description }}</span>
+																<a href="{% url  'vendor_detail' vendor_slug=item.fooditem.vendor.vendor_slug %}" class="badge badge-warning">{{item.fooditem.vendor}}</a>
 															</div>
 															<div class="price-holder">
 																<span class="price">$ {{ item.fooditem.price }}</span>
-																<a href="#" class="remove-from-cart" style="margin-right: 28px;" data-id="{{ item.fooditem.id }}" data-url="{% url 'remove_from_cart' food_id=item.fooditem.id %}"><i class="icon-minus text-color"></i></a>
+																<a href="#" class="remove-from-cart" style="margin-right: 28px;" data-id="{{ item.fooditem.id }}" id="{{item.id}}" data-url="{% url 'remove_from_cart' food_id=item.fooditem.id %}"><i class="icon-minus text-color"></i></a>
 																<label id="qty_{{item.fooditem.id}}">0</label>
 																<a href="#" class="add-to-cart" data-id="{{ item.fooditem.id }}" data-url="{% url 'add_to_cart' food_id=item.fooditem.id %}"><i class="icon-plus4 text-color"></i></a>
 																<a href="#" class="delete-cart" data-id="{{ item.id }}" data-url="{% url 'delete_cart_item' cart_id=item.id %}"><i class="icon-delete text-color"></i></a>
@@ -68,21 +69,21 @@
                                                             Subtotal
                                                             <span class="price float-right">
                                                                 <span class="currency">$</span>
-                                                                <span class="subtotal">0</span>
+                                                                <span id="subtotal">{{sub_total}}</span>
                                                             </span>
                                                         </li>
                                                         <li style="list-style-type: none;">
                                                             Tax
                                                             <span class="price float-right">
                                                                 <span class="currency">$</span>
-                                                                <span class="tax">0</span>
+                                                                <span id="tax">{{tax}}</span>
                                                             </span>
                                                         </li>
                                                         <li style="list-style-type: none; font-weight: 600;">
                                                             Total
                                                             <span class="price float-right">
                                                                 <span class="currency">$</span>
-                                                                <span class="total">0</span>
+                                                                <span id="total">{{grand_total}}</span>
                                                             </span>
                                                         </li>
                                                     </ul>
