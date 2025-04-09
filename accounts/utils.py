@@ -7,9 +7,9 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 def detect_user(user):
     if user.role == 1:
-        redirect_url = 'vendor_dashboard'
+        redirect_url = 'vendor-dashboard'
     elif user.role == 2:
-        redirect_url = 'customer_dashboard'
+        redirect_url = 'customer-dashboard'
     elif user.role == None and user.is_superadmin:
         redirect_url = '/admin'
     return redirect_url

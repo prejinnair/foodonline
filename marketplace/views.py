@@ -104,3 +104,11 @@ def delete_cart_item(request, cart_id=None):
         else:
             return JsonResponse ({'status':'Failed', 'message': 'Invalid request'})
     return JsonResponse({'status':'login_required', 'message':'Please login to continue'})
+
+def search(request):
+    address = request.GET['address']
+    latitude = request.GET['lat']
+    longitude = request.GET['lng']
+    radius = request.GET['radius']
+    restaurant_name = request.GET['restaurant_name']
+    return render(request, 'market_place/listings.html')
