@@ -27,7 +27,7 @@ def check_role_customer(user):
 def register_user(request):
     if request.user.is_authenticated:
         messages.warning(request, 'You are already logged in.')
-        return redirect('my_account')
+        return redirect('my-account')
     elif request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
@@ -41,7 +41,7 @@ def register_user(request):
             template = 'accounts/email/activate_email.html'
             send_verification_email(request, user, subject, template)
             messages.success(request, 'Your account has been created successfully')
-            return redirect('register_user')
+            return redirect('register-user')
     else:
         form = UserForm()
     context = {
@@ -52,7 +52,7 @@ def register_user(request):
 def register_vendor(request):
     if request.user.is_authenticated:
         messages.warning(request, 'You are already logged in.')
-        return redirect('my_account')
+        return redirect('my-account')
     elif request.method == 'POST':
         form = UserForm(request.POST)
         vendor_form = VendorForm(request.POST, request.FILES)
@@ -74,7 +74,7 @@ def register_vendor(request):
             template = 'accounts/email/activate_email.html'
             send_verification_email(request, user, subject, template)
             messages.success(request, 'Your account has been created successfully!, Please wait for the approval.')
-            return redirect('register_vendor')
+            return redirect('register-vendor')
     else:
         form = UserForm()
         vendor_form = VendorForm
@@ -95,15 +95,15 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         messages.success(request, 'Your account has been activated successfully! ')
-        return redirect('my_account')
+        return redirect('my-account')
     else:
         messages.error(request, 'Invalid activation link')
-        return redirect('my_account')
+        return redirect('my-account')
 
 def login(request):
     if request.user.is_authenticated:
         messages.warning(request, 'You are already logged in.')
-        return redirect('my_account')
+        return redirect('my-account')
     elif request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
@@ -111,7 +111,7 @@ def login(request):
         if user is not None:
             auth.login(request, user)
             messages.success(request, f'Succesfully Logged In as {request.user.username}.')
-            return redirect('my_account')
+            return redirect('my-account')
         else:
             messages.error(request, 'Invalid email or password')
             return redirect('login')

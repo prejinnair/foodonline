@@ -77,7 +77,7 @@ def add_category(request):
             category.slug = f'{slugify(category_name)}-{category.id}'
             category.save()
             messages.success(request, f'{category_name} added successfully!. ')
-            return redirect('menu_builder')
+            return redirect('menu-builder')
     else:
         form = CategoryForm()
     context = {
@@ -98,7 +98,7 @@ def edit_category(request, pk=None):
             category.slug = f'{slugify(category_name)}-{category.id}'
             category.save()
             messages.success(request, f'{category_name} Updated successfully!. ')
-            return redirect('menu_builder')
+            return redirect('menu-builder')
     else:
         form = CategoryForm(instance=category)
     context = {
@@ -113,7 +113,7 @@ def delete_category(request, pk=None):
     category = get_object_or_404(Category, pk=pk)
     category.delete()
     messages.success(request, 'Category deleted successfully!. ')
-    return redirect('menu_builder')
+    return redirect('menu-builder')
 
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)

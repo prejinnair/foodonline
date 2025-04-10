@@ -11,7 +11,7 @@
                     <p class="text-center">Please fill this form to get yourself onboarded in the foodOnline marketplace.</p>
                     <hr>
                     <div id="restaurant-sets-holder">
-                        <form class="form-fields-set foodbakery-dev-restaurant-form" method="post" action="{% url 'register_user' %}">
+                        <form class="form-fields-set foodbakery-dev-restaurant-form" method="post" action="{% url 'register-user' %}">
                             {% csrf_token %}
                             <ul class="register-add-restaurant-tab-container restaurant-information-tab-container">
                                 <li>
@@ -86,7 +86,7 @@
                                             <div class="field-holder">
                                                 <div class="payment-holder">
                                                     {% load socialaccount %}
-                                                    <a href="{% provider_login_url 'google' %}?next=/my_account/" class="btn btn-danger">
+                                                    <a href="{% provider_login_url 'google' %}?next=/my-account/" class="btn btn-danger">
                                                         <i class="fa fa-google"></i> Signup with Google
                                                     </a>
                                                 </div>

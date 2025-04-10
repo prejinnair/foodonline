@@ -186,6 +186,6 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-LOGIN_REDIRECT_URL = "/my_account/"
-ACCOUNT_SIGNUP_REDIRECT_URL = "/my_account/"
+LOGIN_REDIRECT_URL = "/my-account/"
+ACCOUNT_SIGNUP_REDIRECT_URL = "/my-account/"
 LOGOUT_REDIRECT_URL = "/login/"
