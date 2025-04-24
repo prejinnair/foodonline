@@ -43,8 +43,11 @@
                                                 {% if vendor.user_profile.address %}
                                                 <span><small class="text-muted">{{ vendor.user_profile.address }}</small></span>
                                                 {% endif %}
+												<br>
+												{% if source_location %}
+												<span><small><b>{{vendor.kms}}</b> Kms away from {{source_location}}</small></span>
+												{% endif %}
 												<div class="list-option">
-
 													<a href="{% url 'vendor_detail' vendor_slug=vendor.vendor_slug %}" class="viewmenu-btn text-color">View Menu</a>
 												</div>
 											</li>

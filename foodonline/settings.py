@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from decouple import config
 from django.contrib.messages import constants as messages
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'marketplace',
+    'django.contrib.gis',
 ]
 
 ACCOUNT_LOGIN_METHODS = {"email"}
@@ -108,7 +109,8 @@ WSGI_APPLICATION = 'foodonline.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        # 'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD':config('DB_PASSWORD'),
@@ -189,3 +191,7 @@ AUTHENTICATION_BACKENDS = (
 LOGIN_REDIRECT_URL = "/my-account/"
 ACCOUNT_SIGNUP_REDIRECT_URL = "/my-account/"
 LOGOUT_REDIRECT_URL = "/login/"
+
+os.environ['PATH'] = os.path.join(BASE_DIR, 'myvenv\Lib\site-packages\osgeo') + ';' + os.environ['PATH']
+os.environ['PROJ_LIB'] = os.path.join(BASE_DIR, 'myvenv\Lib\site-packages\osgeo\dataproj') + ';' + os.environ['PATH']
+GDAL_LIBRARY_PATH = os.path.join(BASE_DIR, 'myvenv\Lib\site-packages\osgeo\gdal.dll')
