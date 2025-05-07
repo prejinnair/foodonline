@@ -19,8 +19,8 @@
                         <ul>
                             <li class="location-has-children choose-location">
                                 <form action="#">
-                                    <input type="text" value="" name="location" placeholder="Enter your delivery location" autocomplete="off">
-                                    <span id="foodbakery_radius_location_open" class="foodbakery-radius-location"><i class="icon-target5"></i></span>
+                                    <input type="text" value="" name="location" placeholder="Your current location" autocomplete="off" id="location">
+                                    <span id="foodbakery_radius_location_open" class="foodbakery-radius-location" onclick="getLocation()"><i class="icon-target5"></i></span>
                                 </form>
                                 
                             </li>
@@ -52,3 +52,41 @@
     </div>
 </header>
 <!-- Header End -->
+<script>
+    const x = document.getElementById("location");
+    // var location = sessionStorage.getItem('location')
+    // if (location != ''){
+    //     x.value = location
+    // }
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+      }
+    }
+    function showPosition(position) {
+      var lat = position.coords.latitude;
+      var lng = position.coords.longitude;
+      x.value = lat + ", " + lng;
+    // hit ajax request to google api for getting location data using lat and lng
+        GOOGLE_API_KEY = "{{ GOOGLE_API_KEY }}"
+        var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + lng + "&key=" + GOOGLE_API_KEY;
+    function error() {
+      alert("Sorry, no position available.");
+    }
+    $.ajax({
+        url: url,
+        type: 'GET',
+        success: function(response){
+            // var location = response.results[0].formatted_address
+            // x.value = location
+            // sessionStorage.setItem('location', location)
+            window.location = '?lat='+lat+'&lng='+lng
+        }
+
+    })
+}
+    </script>
+
+
