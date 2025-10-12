@@ -1,20 +1,33 @@
-
 document.addEventListener("DOMContentLoaded", function () {
-    initAutoComplete();
+    // Check if Google Maps API is loaded, if not wait for it
+    if (typeof google !== 'undefined' && google.maps) {
+        initAutoComplete();
+    } else {
+        // Wait for Google Maps to load
+        window.initMap = function() {
+            initAutoComplete();
+        };
+    }
 });
 
 let autocomplete;
 
 function initAutoComplete(){
-autocomplete = new google.maps.places.Autocomplete(
-    document.getElementById('id_address'),
-    {
-        types: ['geocode', 'establishment'],
-        //default in this app is "IN" - add your country code
-        componentRestrictions: {'country': ['in']},
-    })
-// function to specify what should happen when the prediction is clicked
-autocomplete.addListener('place_changed', onPlaceChanged);
+    // Add a check to ensure google is available
+    if (typeof google === 'undefined' || !google.maps) {
+        console.error('Google Maps API not loaded');
+        return;
+    }
+    
+    autocomplete = new google.maps.places.Autocomplete(
+        document.getElementById('id_address'),
+        {
+            types: ['geocode', 'establishment'],
+            //default in this app is "IN" - add your country code
+            componentRestrictions: {'country': ['in']},
+        })
+    // function to specify what should happen when the prediction is clicked
+    autocomplete.addListener('place_changed', onPlaceChanged);
 }
 
 function onPlaceChanged (){
@@ -179,4 +192,68 @@ $('.delete-cart').on('click', function(e){
             $('#total').html(grand_total)
     }
 }
+
+$('.add_opening_hour').on('click', function(e){
+    e.preventDefault();
+    var day = $('#id_day').val();
+    var from_hour = $('#id_from_hour').val();
+    var to_hour = $('#id_to_hour').val();
+    var is_closed = $('#id_is_closed').is(':checked') ? true : false;
+    var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+    var url = $('#url_id').val();
+    console.log(day, from_hour, to_hour, is_closed, csrf_token);
+    if(day == '' || (from_hour == '' && !is_closed) || (to_hour == '' && !is_closed)){
+        swal('Please fill all the fields', '', 'info')
+        return false;
+    }
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: {
+            'day': day,
+            'from_hour': from_hour,
+            'to_hour': to_hour,
+            'is_closed': is_closed,
+            'csrfmiddlewaretoken': csrf_token
+        },
+        success: function(response){
+            if(response.status == 'Success'){
+                swal(response.status, response.message, "success").then(function(){
+                    html ='<tr id="hour_' + response.id + '"><td>' + response.day + '</td><td>' + (response.is_closed ? 'Closed' : response.from_hour + ' - ' + response.to_hour) + '</td><td><a href="#" class="btn btn-sm btn-danger remove_opening_hour" data-id="' + response.id + '" data-url="/vendor/opening-hours/delete/' + response.id + '">Delete</a></td></tr>';
+                    $('#opening_hours_table').append(html);
+                    $('#opening_hours_form')[0].reset();
+                });
+            }
+            else{
+                swal(response.status, response.message, "error");
+            }
+        }
+    })
+
+})
+
+$(document).on('click', '.remove_opening_hour', function(e){
+    e.preventDefault();
+    url = $(this).data('url');
+    console.log(url);
+
+    $.ajax({
+        type: 'GET',
+        url: url,
+        success: function(response){
+            if(response.status == 'Success'){
+                swal(response.status, response.message, "success").then(function(){
+                    console.log('#hour_' + response.id);
+                    $('#hour_' + response.id).remove();
+                });
+            }
+            else{
+                swal(response.status, response.message, "error");
+            }
+        }
+    })
+
+})
+
+// end of document.ready function
 })

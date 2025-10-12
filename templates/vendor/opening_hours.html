@@ -17,6 +17,32 @@
 								<div class="user-holder">
 									<h5 class="text-uppercase">Opening Hours</h5>
                                     <hr>
+									{% if opening_hours %}
+									<table class="table table-bordered" id="opening_hours_table">
+										<tbody>
+											{% for hour in opening_hours %}
+											<tr id ="hour_{{ hour.id }}">
+												<td>{{ hour.get_day_display }}</td>
+												<td>{% if hour.is_closed %}Closed{% else %}{{ hour.from_hour }} - {{ hour.to_hour }}{% endif %}</td>
+												<td>
+													<!-- Add edit and delete actions here -->
+													<a href="#" class="btn btn-sm btn-danger remove_opening_hour" data-id="{{ hour.id }}" data-url="{% url 'delete_opening_hour' hour.id %}">Delete</a>
+												</td>
+											</tr>
+											{% endfor %}
+										</tbody>
+									</table>
+									{% else %}
+									<p>No opening hours set yet.</p>
+									{% endif %}
+									<hr>
+									<h5 class="text-uppercase">Add Opening Hour</h5>
+									<form id="opening_hours_form" method="post" action="{% url 'add_opening_hour' %}">
+										{% csrf_token %}
+										{{ form.as_p }}
+										<input type="hidden" id="url_id" value="{% url 'add_opening_hour' %}">
+										<button class="btn btn-success add_opening_hour">Add Hours</button>
+									</form>
 								</div>
 							</div>
 						</div>

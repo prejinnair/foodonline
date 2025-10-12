@@ -1,7 +1,7 @@
 from django.db import models
 from accounts.models import User, UserProfile
 from accounts.utils import send_notification
-from datetime import time
+import datetime
 # Create your models here.
 class Vendor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user')
@@ -15,6 +15,21 @@ class Vendor(models.Model):
 
     def __str__(self):
         return self.vendor_name
+    
+    def is_open(self):
+        #get current day of week
+        today = datetime.date.today().isoweekday()
+        #get current time
+        current_time = datetime.datetime.now().strftime('%H:%M:%S')
+        #get opening hours for the day
+        opening_hours = OpeningHour.objects.filter(vendor=self, day=today)
+        for i in opening_hours:
+            start = str(datetime.datetime.strptime(i.from_hour, '%I:%M %p').time())
+            end = str(datetime.datetime.strptime(i.to_hour, '%I:%M %p').time())
+            if start < current_time and end > current_time:
+                return True
+            else:
+                return False
     
     def save(self, *args, **kwargs):
         if self.pk is not None:
@@ -54,5 +69,5 @@ class OpeningHour(models.Model):
     is_closed = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ('day', 'from_hour')
-        unique_together = ('day', 'from_hour', 'to_hour')
+        ordering = ('day', '-from_hour')
+        unique_together = ('vendor', 'day', 'from_hour', 'to_hour')

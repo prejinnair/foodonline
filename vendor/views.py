@@ -1,7 +1,9 @@
+from django.db import IntegrityError
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import VendorForm
+from .forms import VendorForm, OpeningHourForm
 from accounts.forms import UserProfileForm
-from .models import Vendor
+from .models import Vendor, OpeningHour
 from accounts.models import UserProfile
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -170,4 +172,43 @@ def delete_food(request, pk=None):
     return redirect('fooditems_by_category', food_item.category.id)    
 
 def opening_hours(request):
-    return render(request, 'vendor/opening_hours.html')
+    opening_hours = OpeningHour.objects.filter(vendor=get_vendor(request)).order_by('day')
+    form = OpeningHourForm()
+    context = {
+        'opening_hours': opening_hours,
+        'form': form,
+    }
+    return render(request, 'vendor/opening_hours.html', context)
+
+def add_opening_hour(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'Failed', 'message': 'Login required!'}, status=200)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        if request.method == 'POST':
+            form = OpeningHourForm(request.POST)
+            if form.is_valid():
+                try:
+                    opening_hour = form.save(commit=False)
+                    opening_hour.vendor = get_vendor(request)
+                    opening_hour.save()
+                    return JsonResponse({'status': 'Success', 'message': 'Opening hour added successfully!', 'id': opening_hour.id, 'day': opening_hour.get_day_display(), 'from_hour': opening_hour.from_hour, 'to_hour': opening_hour.to_hour, 'is_closed': opening_hour.is_closed}, status=200)
+                except IntegrityError as e:
+                    return JsonResponse({'status': 'Failed', 'message': 'You have already added opening hours for this day and time!', 'error': str(e)}, status=200)
+            else:
+                return JsonResponse({'status': 'Failed', 'message': 'You have already added opening hours for this day and time!'}, status=200)
+        else:
+            return JsonResponse({'status': 'Failed', 'message': 'Invalid request!'}, status=200)
+    else:
+        return JsonResponse({'status': 'Failed', 'message': 'Invalid request!'}, status=200)
+    
+def delete_opening_hour(request, pk=None):
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'Failed', 'message': 'Login required!'}, status=200)
+    
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        opening_hour = get_object_or_404(OpeningHour, pk=pk)
+        opening_hour.delete()
+        return JsonResponse({'status': 'Success', 'message': 'Opening hour deleted successfully!', 'id': pk}, status=200)
+    else:
+        return JsonResponse({'status': 'Failed', 'message': 'Invalid request!'}, status=200)
