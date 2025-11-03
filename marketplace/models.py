@@ -16,3 +16,17 @@ class Cart(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class Tax(models.Model):
+    tax_type = models.CharField(max_length=50, unique=True)
+    tax_percentage = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='Tax Percentage(%)')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Tax'
+        verbose_name_plural = 'Taxes'
+
+    def __str__(self):
+        return self.tax_type

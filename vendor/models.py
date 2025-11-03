@@ -24,12 +24,13 @@ class Vendor(models.Model):
         #get opening hours for the day
         opening_hours = OpeningHour.objects.filter(vendor=self, day=today)
         for i in opening_hours:
-            start = str(datetime.datetime.strptime(i.from_hour, '%I:%M %p').time())
-            end = str(datetime.datetime.strptime(i.to_hour, '%I:%M %p').time())
-            if start < current_time and end > current_time:
-                return True
-            else:
-                return False
+            if not i.is_closed:
+                start = str(datetime.datetime.strptime(i.from_hour, '%I:%M %p').time())
+                end = str(datetime.datetime.strptime(i.to_hour, '%I:%M %p').time())
+                if start < current_time and end > current_time:
+                    return True
+                else:
+                    return False
     
     def save(self, *args, **kwargs):
         if self.pk is not None:

@@ -91,7 +91,7 @@ $(document).ready(function(){
                 $('#cart-count').html(response.cart_count['cart_count'])
                 $('#qty_' + foodId).html(response.qty)
                 // subtotal, tax, grand_total
-                applyCartAmount(response.cart_amount['sub_total'], response.cart_amount['tax'], response.cart_amount['grand_total'])
+                applyCartAmount(response.cart_amount['sub_total'], response.cart_amount['tax_dict'], response.cart_amount['grand_total'])
                 }
                 else if(response.status == 'login_required'){
                     swal( response.message, "Please login to continue", "info").then(function(){
@@ -127,7 +127,7 @@ $('.remove-from-cart').on('click', function(e){
                 removeCartItem(response.qty, cartId);
                 checkEmptyCart();
                 // sub_total, tax, grand_total
-                applyCartAmount(response.cart_amount['sub_total'], response.cart_amount['tax'], response.cart_amount['grand_total'])
+                applyCartAmount(response.cart_amount['sub_total'], response.cart_amount['tax_dict'], response.cart_amount['grand_total'])
             }
             else if(response.status == 'login_required'){
                 swal( response.message, "Please login to continue", "info").then(function(){
@@ -161,7 +161,7 @@ $('.delete-cart').on('click', function(e){
                 swal(response.status, response.message, "success")
                 removeCartItem(0, cart);
                 checkEmptyCart();
-                applyCartAmount(response.cart_amount['sub_total'], response.cart_amount['tax'], response.cart_amount['grand_total'])
+                applyCartAmount(response.cart_amount['sub_total'], response.cart_amount['tax_dict'], response.cart_amount['grand_total'])
             }
             else{
                 swal(response.status, response.message, 'error')
@@ -185,13 +185,17 @@ $('.delete-cart').on('click', function(e){
         }
     }
 
-    function applyCartAmount(sub_total, tax, grand_total){
+    function applyCartAmount(sub_total, tax_dict, grand_total){
         if(window.location.pathname == '/cart/'){
             $('#subtotal').html(sub_total)
-            $('#tax').html(tax)
             $('#total').html(grand_total)
+            for(key in tax_dict){
+                for(tax_percentage in tax_dict[key]){
+                    $('#tax_' + key).html(tax_dict[key][tax_percentage])
+                }
+            }
+        }
     }
-}
 
 $('.add_opening_hour').on('click', function(e){
     e.preventDefault();
