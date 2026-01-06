@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'marketplace',
     'django.contrib.gis',
+    'customers',
 ]
 
 ACCOUNT_LOGIN_METHODS = {"email"}
